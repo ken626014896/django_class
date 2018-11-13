@@ -2,7 +2,7 @@ from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse,Http404,HttpResponseRedirect
 from django.template import  loader
 from django.urls import  reverse
-
+from django.http import QueryDict
 
 
 from polls.models import Question, Choice
@@ -14,6 +14,8 @@ def index(request):
     context = {
         'latest_question_list': latest_question_list,
     }
+    print(request.path)
+    print(request.is_ajax())
     #两种方式
     # return HttpResponse(templates.render(context, request))
 
@@ -27,7 +29,7 @@ def detail(request, question_id):
     question=get_object_or_404(Question,pk=question_id)
     return render(request,"polls/detail.html" ,{"question":question})
 
-def results(request, question_id): 
+def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/results.html', {'question': question})
 
