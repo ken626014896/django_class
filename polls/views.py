@@ -3,7 +3,7 @@ from django.http import HttpResponse,Http404,HttpResponseRedirect
 from django.template import  loader
 from django.urls import  reverse
 from django.http import QueryDict
-
+from polls.forms import UploadFileForm
 
 from polls.models import Question, Choice
 # Create your views here.
@@ -49,3 +49,22 @@ def vote(request, question_id):
         selected_choice.save()
         # 成功处理数据后，自动跳转到结果页面，防止用户连续多次提交。
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+#文件上传
+def upload_file(request):
+    if request.method == 'GET':
+
+        return render(request, 'polls/upload.html')
+
+    elif request.method=='POST':
+        files=request.FILES.get('files')
+        handle_uploaded_file(files,files.name)
+        return HttpResponseRedirect(reverse('polls:index'))
+
+
+
+#文件处理方法
+def handle_uploaded_file(f,name):
+    with open(name, 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
