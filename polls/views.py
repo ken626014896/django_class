@@ -5,6 +5,17 @@ from django.urls import  reverse
 from django.http import QueryDict
 from polls.forms import UploadFileForm
 
+
+import time
+import django.dispatch
+from django.dispatch import receiver
+
+# Create your views here.
+
+# 定义一个信号
+work_done = django.dispatch.Signal(providing_args=['path', 'time'])
+
+
 from polls.models import Question, Choice
 # Create your views here.
 def index(request):
@@ -14,12 +25,24 @@ def index(request):
     context = {
         'latest_question_list': latest_question_list,
     }
-    print(request.path)
-    print(request.is_ajax())
+    request.session['fav'] = 'blue'
+    print(request.session.get('fav', 'red'))
+    print(request.session['fav'])
     #两种方式
     # return HttpResponse(templates.render(context, request))
 
+
+   #测试信号接受
+    # 发送信号，将请求的IP地址和时间一并传递过去
+    url_path = request.path
+    work_done.send(index, path=url_path, time=time.strftime("%Y-%m-%d %H:%M:%S"))
+
+
     return render(request,'polls/index.html',context)
+
+@receiver(work_done, sender=index)
+def my_callback(sender, **kwargs):
+    print("我在%s时间收到来自%s的信号，请求url为%s" % (kwargs['time'], sender, kwargs["path"]))
 
 def detail(request, question_id):
     # try:
@@ -49,6 +72,32 @@ def vote(request, question_id):
         selected_choice.save()
         # 成功处理数据后，自动跳转到结果页面，防止用户连续多次提交。
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+from django.core import serializers
+from django.contrib import messages
+from django.core.mail import send_mail
+def test(requset):
+
+    #序列化
+    data = serializers.serialize("xml", Choice.objects.all())
+    print(data)
+
+    #反序列
+    # for obj in serializers.deserialize("xml", data):
+    #  print(obj)
+    #消息框架
+    messages.add_message(requset,messages.INFO, 'Hello world.')
+
+    # 发送邮件
+    send_mail( '来自龙之介的测试邮件',
+        '分享一切！',
+        'ken626014896@163.com',
+        ['626014896@qq.com'],)
+    print("发送信息到邮箱。。。。。。。")
+    return render(requset,"polls/test.html")
+
+
+
 
 #文件上传
 def upload_file(request):

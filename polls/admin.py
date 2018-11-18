@@ -11,9 +11,9 @@ class QuestionAdmin(admin.ModelAdmin):
 
 
     fieldsets = [
-        (None, {'fields': ['question_text']}),
-        ('Date information', {'fields': ['pub_date'],
-                               'classes': ['collapse']
+        (None, {'fields': ('question_text',)}),
+        ('Date information', {'fields': ('pub_date',),
+                               'classes': ('collapse',)
                               }),
     ]
 
@@ -30,4 +30,15 @@ admin.site.register(Question,QuestionAdmin)
 class ChoiceAdmin(admin.ModelAdmin):
     list_display = ['choice_text','votes','question','question_id']
 
+    list_display_links = ('choice_text', 'votes')
+    list_filter = ['question']
+    fieldsets = (
+        (None, {
+            'fields': ('choice_text',)
+        }),
+        ('Advanced options', {
+            'classes': ('collapse',),
+            'fields': ('votes', 'question'),
+        }),
+    )
 admin.site.register(Choice,ChoiceAdmin)
