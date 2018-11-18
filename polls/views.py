@@ -88,7 +88,9 @@ def test(requset):
     #消息框架
     messages.add_message(requset,messages.INFO, 'Hello world.')
 
-    # 发送邮件。。
+
+    # 发送邮件。
+
     send_mail( '来自龙之介的测试邮件',
         '分享一切！',
         'ken626014896@163.com',
