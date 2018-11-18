@@ -20,6 +20,10 @@ from  polls.models import Question
 from django.contrib.sitemaps import GenericSitemap
 from django.contrib.sitemaps.views import sitemap
 
+
+
+from login import views as loginview
+
 sitemaps = {
     'polls': GenericSitemap({'queryset': Question.objects.all(), 'question_text': 'pub_date'}, priority=0.6),
     # 如果还要加其它的可以模仿上面的
@@ -27,7 +31,13 @@ sitemaps = {
 urlpatterns = [
     re_path(r'^admin/doc/',include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
+    path('login/', loginview.login,name='login'),
+    path('register/', loginview.register,name='register'),
+    path('logout/', loginview.logout,name='logout'),
     path('polls/', include('polls.urls')),
     re_path(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps},
         name='django.contrib.sitemaps.views.sitemap'),
+
+
+    re_path(r'^captcha', include('captcha.urls'))
 ]

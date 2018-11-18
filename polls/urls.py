@@ -6,6 +6,7 @@ app_name = 'polls'
 urlpatterns = [
 
     path('', views.index,name='index'),
+
     path('feed/', LatestEntriesFeed()),
     path('test/', views.test,name='test'),
     path('upload/', views.upload_file,name='upload_file'),
@@ -14,6 +15,8 @@ urlpatterns = [
     re_path(r'^(?P<question_id>[0-9]+)/results/$', views.results, name='results'),
     # ex: /polls/5/vote/
     re_path(r'^(?P<question_id>[0-9]+)/vote/$', views.vote, name='vote'),
+
+
 
 
 ]

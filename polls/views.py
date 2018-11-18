@@ -5,11 +5,16 @@ from django.urls import  reverse
 from django.http import QueryDict
 from polls.forms import UploadFileForm
 
-
 import time
 import django.dispatch
 from django.dispatch import receiver
 
+from django.views.decorators.cache import cache_page
+
+
+import logging
+# 获取一个logger对象
+logger = logging.getLogger(__name__)
 # Create your views here.
 
 # 定义一个信号
@@ -18,6 +23,9 @@ work_done = django.dispatch.Signal(providing_args=['path', 'time'])
 
 from polls.models import Question, Choice
 # Create your views here.
+
+#因为使用了视图缓存，所以下面方法只是用一次
+# @cache_page(60 * 15)
 def index(request):
     latest_question_list = Question.objects.order_by('-pub_date')
     templates=loader.get_template('polls/index.html')
@@ -25,12 +33,14 @@ def index(request):
     context = {
         'latest_question_list': latest_question_list,
     }
-    request.session['fav'] = 'blue'
-    print(request.session.get('fav', 'red'))
-    print(request.session['fav'])
+    # request.session['fav'] = 'blue'
+    # print(request.session.get('fav', 'red'))
+    # print(request.session['fav'])
     #两种方式
     # return HttpResponse(templates.render(context, request))
 
+   #测试logging
+    logging.info('Something went wrong!')
 
    #测试信号接受
     # 发送信号，将请求的IP地址和时间一并传递过去
